@@ -1,0 +1,62 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
+
+# read dataframe from csv file
+df = pd.read_csv('input_scores.csv',sep=";")
+
+metrics = df.columns.drop('DataID')
+
+# boxplot, violinplot, densityplot, histogram
+for column in metrics:
+    plt.figure(figsize=(12,8))
+
+    plt.subplot(221)
+    sns.boxplot(df[column])
+    plt.title(f"Boxplot of {column}")
+
+    plt.subplot(222)
+    sns.violinplot(df[column])
+    plt.title(f"Violin plot of {column}")
+
+    plt.subplot(223)
+    sns.kdeplot(df[column], shade=True)
+    plt.title(f"Density plot of {column}")
+
+    plt.subplot(224)
+    plt.hist(df[column], edgecolor = 'black')
+    plt.title(f"Histogram of {column}")
+
+    plt.tight_layout()
+    plt.savefig(f"{column}_distributions.jpeg")
+    plt.show()
+
+# bar chart
+df.set_index("DataID")[metrics].plot(kind='bar', subplots=True)
+plt.tight_layout()
+plt.savefig("barchart.jpeg")
+plt.show()
+
+# line chart
+df.set_index("DataID")[metrics].plot(subplots=True)
+plt.tight_layout()
+plt.savefig("linechart.jpeg")
+plt.show()
+
+# pairwise scatter plots
+sns.pairplot(df, vars=metrics, hue='DataID')
+plt.savefig("scatter_plot.jpeg")
+plt.show()
+
+# correlation heatmap
+sns.heatmap(df[metrics].corr(), annot=True, cmap='coolwarm')
+plt.savefig("heatmap.jpeg")
+plt.show()
+
+
+# exporting to an Excel
+with pd.ExcelWriter('output.xlsx') as writer:
+    df[metrics].describe().to_excel(writer, sheet_name='Summary Statistics')
+    df[metrics].quantile([.1, .25, .5, .75], axis = 0).to_excel(writer, sheet_name='Quantile')
+    df[metrics].corr().to_excel(writer, sheet_name='Correlation')
