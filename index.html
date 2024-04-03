@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call to Summary</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3f8f3;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #003c71;
+            padding: 20px 0;
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 4px solid #ffcb05;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .upload-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #003c71;
+        }
+        .upload-section input[type="file"] {
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .button-container button {
+            background-color: #003c71;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-left: 10px;
+        }
+        .button-container button:hover {
+            background-color: #002e55;
+        }
+        .text-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .text-box {
+            width: 30%;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow-y: scroll;
+            max-height: 300px; /* Limit the maximum height */
+        }
+        .text-box h2 {
+            color: #003c71;
+            margin-top: 0;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .feedback-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #003c71;
+        }
+        .feedback-form input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .feedback-form input[type="text"],
+        .feedback-form input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .thumbs-up, .thumbs-down {
+            font-size: 36px;
+            cursor: pointer;
+            margin-right: 10px;
+            color: #003c71;
+            transition: transform 0.3s ease;
+        }
+        .thumbs-up:hover, .thumbs-down:hover {
+            transform: scale(1.2);
+        }
+        .slider-markers {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #777;
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Call to Summary</h1>
+    </header>
+    <div class="container">
+        <div class="upload-section">
+            <form action="/" method="post" enctype="multipart/form-data">
+                <label for="audio_file">Upload Your Audio File:</label>
+                <input type="file" name="audio_file" id="audio_file" accept=".wav">
+                <br><br>
+                <label for="play_audio">Do you want to play the audio?</label>
+                <input type="radio" id="yes" name="play_audio" value="yes" checked>
+                <label for="yes">Yes</label>
+                <input type="radio" id="no" name="play_audio" value="no">
+                <label for="no">No</label>
+                <div class="button-container">
+                    <button type="submit">Submit</button>
+                    <button type="submit" name="pause_audio">Pause Audio</button>
+                </div>
+            </form>
+        </div>
+        <div class="text-container">
+            <div class="text-box transcription">
+                <h2>Transcription</h2>
+                {% for line in transcription_lines %}
+                    <p style="color:{{ line['color'] }}">{{ line['speaker'] }}: {{ line['text'] }}</p>
+                {% endfor %}
+            </div>
+            <div class="text-box summary">
+                <h2>Summary</h2>
+                <p>{{ summary|replace('-', '\n') }}</p>
+            </div>
+            <div class="text-box operator-summary">
+                <h2>Operator Summary</h2>
+                <p>{{ operator_summary }}</p>
+            </div>
+        </div>
+        <form action="/like" method="post" class="feedback-form">
+            <label for="accuracy">Accuracy:</label>
+            <input type="range" id="accuracy" name="accuracy" min="1" max="5" value="3" step="1">
+            <div class="slider-markers">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+            </div>
+            <label for="completeness">Completeness:</label>
+            <input type="range" id="completeness" name="completeness" min="1" max="5" value="3" step="1">
+            <div class="slider-markers">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+            </div>
+            <label for="coherence">Coherence:</label>
+            <input type="range" id="coherence" name="coherence" min="1" max="5" value="3" step="1">
+            <div class="slider-markers">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+            </div>
+            <label for="relevancy">Relevancy:</label>
+            <input type="range" id="relevancy" name="relevancy" min="1" max="5" value="3" step="1">
+            <div class="slider-markers">
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+            </div>
+            <label for="time_savings">Time savings in seconds:</label>
+            <input type="number" id="time_savings" name="time_savings" min="0">
+            <label for="feedback_user">Feedback from the user:</label>
+            <input type="text" id="feedback_user" name="feedback_user">
+            <div>
+                <label for="like" class="thumbs-up">&#128077;</label>
+                <input type="radio" id="like" name="liked" value="like">
+                <label for="dislike" class="thumbs-down">&#128078;</label>
+                <input type="radio" id="dislike" name="liked" value="dislike">
+            </div>
+            <input type="hidden" id="raw_audio_file" name="raw_audio_file" value="{{ audio_filename }}">
+            <input type="hidden" id="json_file_name" name="json_file_name" value="{{ json_filename }}">
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+</body>
+</html>
