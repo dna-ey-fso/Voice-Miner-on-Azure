@@ -21,7 +21,7 @@ if not os.path.exists(CSV_FILE_PATH):
     with open(CSV_FILE_PATH, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(
-            ['Run Date', 'JSON File Name', 'Accuracy', 'Completeness', 'Coherence', 'Relevancy', 'Time Savings',
+            ['Run Date', 'JSON File Name', 'Audio File Name', 'Accuracy', 'Completeness', 'Coherence', 'Relevancy', 'Time Savings',
              'Feedback from the user', 'Liked'])
 
 
@@ -46,11 +46,13 @@ def save_feedback(data):
 transcription_lines = []
 summary = ''
 operator_summary = ''
+input_audio_filename = ''
+input_json_filename = ''
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global transcription_lines, summary, operator_summary
+    global transcription_lines, summary, operator_summary, input_audio_filename, input_json_filename
 
     if request.method == 'POST':
         # Check if user wants to play audio
@@ -98,12 +100,18 @@ def index():
             pygame.mixer.music.load(audio_file_path)
             pygame.mixer.music.play()
 
+        input_audio_filename = audio_filename
+        input_json_filename = json_filename
+
     return render_template('index.html', transcription_lines=transcription_lines, summary=summary,
-                           operator_summary=operator_summary)
+                           operator_summary=operator_summary, audio_filename=input_audio_filename,
+                           json_filename=input_json_filename)
 
 
 @app.route('/like', methods=['POST'])
 def like():
+    global input_audio_filename, input_json_filename, transcription_lines, summary, operator_summary
+
     liked = request.form.get('liked', '')
     accuracy = int(request.form.get('accuracy', 0))
     completeness = int(request.form.get('completeness', 0))
@@ -112,12 +120,14 @@ def like():
     time_savings = request.form.get('time_savings', '')
     feedback_user = request.form.get('feedback_user', '')
     run_date = time.strftime('%Y-%m-%d %H:%M:%S')
-    save_feedback([run_date, accuracy, completeness, coherence, relevancy, time_savings, feedback_user, liked])
+    save_feedback([run_date, input_json_filename, input_audio_filename, accuracy, completeness, coherence, relevancy, time_savings, feedback_user, liked])
 
     # Clear the fields
     transcription_lines = []
     summary = ''
     operator_summary = ''
+    input_audio_filename = ''
+    input_json_filename = ''
 
     return redirect(url_for('index'))
 
