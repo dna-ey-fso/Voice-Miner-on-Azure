@@ -91,7 +91,7 @@
             color: #003c71;
         }
         .feedback-form input[type="range"] {
-            width: 100%;
+            width: 50px;
             margin-bottom: 10px;
         }
         .feedback-form input[type="text"],
@@ -113,12 +113,19 @@
         .thumbs-up:hover, .thumbs-down:hover {
             transform: scale(1.2);
         }
-        .slider-markers {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #777;
-            padding: 0 5px;
+        .thumbs-selector input[type="radio"] {
+            display: none;
+        }
+        .thumbs-selector label {
+            font-size: 24px;
+            cursor: pointer;
+            color: #003c71;
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+        .thumbs-selector input[type="radio"]:checked + label {
+            transform: scale(1.2);
+            font-weight: bold;
         }
     </style>
 </head>
@@ -161,55 +168,50 @@
         </div>
         <form action="/like" method="post" class="feedback-form">
             <label for="accuracy">Accuracy:</label>
-            <input type="range" id="accuracy" name="accuracy" min="1" max="5" value="3" step="1">
-            <div class="slider-markers">
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>5</span>
-            </div>
+            <p class="description">Does the summary maintain the context and information in the original text?</p>
+            <input type="range" id="accuracy" name="accuracy" min="0" max="1" value="0" step="1" class="yes-no-slider" list="yes-no">
+            <datalist id="yes-no">
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </datalist>
             <label for="completeness">Completeness:</label>
-            <input type="range" id="completeness" name="completeness" min="1" max="5" value="3" step="1">
-            <div class="slider-markers">
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>5</span>
-            </div>
+            <p class="description">Was the summary able to capture all the essential elements and key points of the original text?</p>
+            <input type="range" id="completeness" name="completeness" min="0" max="1" value="0" step="1" class="yes-no-slider" list="yes-no">
             <label for="coherence">Coherence:</label>
-            <input type="range" id="coherence" name="coherence" min="1" max="5" value="3" step="1">
-            <div class="slider-markers">
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>5</span>
-            </div>
+            <p class="description">Is the summary easy to understand and does it flow as a cohesive unit?</p>
+            <input type="range" id="coherence" name="coherence" min="0" max="1" value="0" step="1" class="yes-no-slider" list="yes-no">
             <label for="relevancy">Relevancy:</label>
-            <input type="range" id="relevancy" name="relevancy" min="1" max="5" value="3" step="1">
-            <div class="slider-markers">
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>5</span>
-            </div>
+            <p class="description">Does the summary focus on the key points and avoids unnecessary information?</p>
+            <input type="range" id="relevancy" name="relevancy" min="0" max="1" value="0" step="1" class="yes-no-slider" list="yes-no">
             <label for="time_savings">Time savings in seconds:</label>
             <input type="number" id="time_savings" name="time_savings" min="0">
             <label for="feedback_user">Feedback from the user:</label>
             <input type="text" id="feedback_user" name="feedback_user">
-            <div>
-                <label for="like" class="thumbs-up">&#128077;</label>
-                <input type="radio" id="like" name="liked" value="like">
-                <label for="dislike" class="thumbs-down">&#128078;</label>
-                <input type="radio" id="dislike" name="liked" value="dislike">
+            <div class="thumbs-selector">
+                <input type="radio" id="like" name="liked" value="yes">
+                <label for="like">&#128077;</label>
+                <input type="radio" id="dislike" name="liked" value="no">
+                <label for="dislike">&#128078;</label>
             </div>
             <input type="hidden" id="raw_audio_file" name="raw_audio_file" value="{{ audio_filename }}">
             <input type="hidden" id="json_file_name" name="json_file_name" value="{{ json_filename }}">
-            <button type="submit">Submit Feedback</button>
+            <button type="submit" onclick="clearFields()">Submit Feedback</button>
         </form>
     </div>
+    <script>
+        function clearFields() {
+            document.getElementById("accuracy").value = 0;
+            document.getElementById("completeness").value = 0;
+            document.getElementById("coherence").value = 0;
+            document.getElementById("relevancy").value = 0;
+            document.getElementById("time_savings").value = "";
+            document.getElementById("feedback_user").value = "";
+            document.querySelector('.transcription').innerHTML = '<h2>Transcription</h2>';
+            document.querySelector('.summary').innerHTML = '<h2>Summary</h2>';
+            document.querySelector('.operator-summary').innerHTML = '<h2>Operator Summary</h2>';
+            document.getElementById("like").checked = false;
+            document.getElementById("dislike").checked = false;
+        }
+    </script>
 </body>
 </html>
