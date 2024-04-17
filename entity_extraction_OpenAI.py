@@ -94,14 +94,14 @@ def parse_response(response_text):
     # This needs to be tailored based on the structure of the response from OpenAI's language model
     entities = {
         'client_name': 'Jiri De Joghe',
-        'operator_name': 'Clara Rosolen',
+        'operator_name': 'John Doe ',
         'broker_name': 'AB Insurance',
         'contract_number': '1234567890',
         'offer_number': '0987654321',
         'premium_amount': '260.41€',
         'branch': 'Auto ',
         'policy_effect_date': '01 janvier 2024',
-        'dossier_type': 'Familis',
+        'dossier_type': 'B_14',
         'dossier_number': '987654321',
     }
 
@@ -159,8 +159,8 @@ def save_to_csv(data, output_dir):
 
 # Example usage:
 # Example usage:
-root_dir = 'C:/Users/DQ761VX/OneDrive - EY/Documents/Projects/AG_file/Data'  # Change this to the root directory you want to search
-output_dir = 'C:/Users/DQ761VX/OneDrive - EY/Documents/Projects/AG_file'
+root_dir = 'C:/Users/Data'  # Change this to the root directory you want to search
+output_dir = 'C:/Users/Output'
 
 data = process_files(root_dir)
 plot_entity_frequency(data, output_dir)
