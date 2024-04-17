@@ -210,8 +210,8 @@ def save_to_csv(data, output_dir):
 
 
 # Example usage:
-root_dir = 'C:/Users/DQ761VX/OneDrive - EY/Documents/Projects/AG_file/Data'  # Change this to the root directory you want to search
-output_dir = 'C:/Users/DQ761VX/OneDrive - EY/Documents/Projects/AG_file'
+root_dir = 'C:/Users/Data'  # Change this to the root directory you want to search
+output_dir = 'C:/Users/'
 
 data = process_files(root_dir)
 plot_entity_frequency(data, output_dir)
